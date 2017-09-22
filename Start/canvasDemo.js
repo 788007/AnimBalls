@@ -2,7 +2,7 @@
 
 window.onload = init; // Wait for the page to load before we begin animation
 var canvas;
-var ctx;// This is a better name for a global variable
+var ctx;
 var balls = [];
 
 function init(){
@@ -20,7 +20,7 @@ function init(){
   // get the context
   ctx = canvas.getContext('2d'); // This is the context
   //create array of balls
-  for (var i = 0; i < 5; i++){
+  for (var i = 0; i < 15; i++){
     var radius = Math.random()*20 + 10;
     var color = randomColor();
     //set location vector
@@ -50,7 +50,6 @@ function randomColor(){
   return pastel;
 }
 
-
 //creates ball objects when called w/ new
 function Ball(radius, loc, vel, acc, color){
   this.radius = radius;
@@ -63,12 +62,13 @@ function Ball(radius, loc, vel, acc, color){
   //this.momentum = this.vel.scalarMult(this.mass);
 }
 
+
 //updates ball position
 Ball.prototype.update = function () {
   ball = this;
   ball.checkEdges();
   ball.loc.add(ball.vel);
-  ball.vel.add(ball.acc);
+  //ball.vel.add(ball.acc);
 }
 
 //reverses direction when ball hits edge
@@ -90,6 +90,49 @@ Ball.prototype.checkEdges = function () {
     ball.loc.y = ball.radius;
     ball.vel.y *= -1;
   }
+}
+
+//check if balls should bounce off each other
+function checkBallBounces () {
+  for(var i = 0; i < balls.length ; i++){
+    balls[i].framesSinceCollision++;
+    if(balls[i].framesSinceCollision < 15){continue;}
+
+    for(var j = i + 1; j < balls.length; j++){
+      if(balls[j].framesSinceCollision < 15){continue;}
+      //check if edges of 2 balls are touching
+      var dist = vector2d.distance(balls[i].loc, balls[j].loc);
+      if( dist <= balls[i].radius + balls[j].radius){
+        var b1 = balls[i];
+        var b2 = balls[j];
+        //new velocities after collision
+        var v1x = b1.vel.x;
+        var v1y = b1.vel.y;
+        var v2x = b2.vel.x;
+        var v2y = b2.vel.y;
+        var m1 = b1.mass;
+        var m2 = b2.mass;
+
+        var newx1 = (m1 - m2) / (m1 + m2) * v1x + (2 * m2) / (m1 + m2) * v2x;
+        var newx2 = (2 * m2) / (m1 + m2) * v1x + (m2 - m1) / (m1 + m2) * v2x;
+
+        var newy1 = (m1 - m2) / (m1 + m2) * v1y + (2 * m2) / (m1 + m2) * v2y;
+        var newy2 = (2 * m2) / (m1 + m2) * v1y + (m2 - m1) / (m1 + m2) * v2y;
+
+        //console.log(dx1, dx2, dy1, dy2);
+
+        b1.vel = new vector2d(newx1, newy1);
+        b2.vel = new vector2d(newx2, newy2);
+
+        b1.framesSinceCollision = 0;
+        b2.framesSinceCollision = 0;
+        console.log("collision");
+        //console.log(b1.vel.x, b1.vel.y);
+        //console.log(b2.vel.x, b2.vel.y);
+      }
+    }
+  }
+
 }
 
 //draws ball
@@ -114,7 +157,7 @@ function mouseAttract(){
 
 function animate(){
   requestAnimationFrame(animate);
-
+  checkBallBounces();
   canvas.onclick = mouseAttract;
 
   // canvas.onmousemove = function(event) {
