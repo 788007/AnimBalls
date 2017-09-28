@@ -82,6 +82,7 @@ function checkBallBounces () {
         var total_mass = b1.mass + b2.mass;
         var vel_cm = vector2d.scalarDiv(p_initial, total_mass);
         //calculate velocities after collision using vf = 2*v_cm - vi
+        //http://courses.ncssm.edu/apb11o/resources/guides/G09-4b.com.htm 
         var v1_final = vector2d.scalarMult(vel_cm, 2);
         v1_final.subtract(b1.vel);
         var v2_final = vector2d.scalarMult(vel_cm, 2);
