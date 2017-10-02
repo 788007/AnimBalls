@@ -8,17 +8,16 @@ function Mover(radius, loc, vel, acc, color){
   this.vel = vel;
   this.acc = acc;
 
-  //track how many frames since 2 balls collided
-  this.collisionTracker = [];
-  for(var i = 0; i < num_balls; i++){
-    this.collisionTracker.push(10);
-  }
 }
 
+//using equation p = m * v
+//returns vector
 Mover.prototype.momentum = function(){
   return vector2d.scalarMult(this.vel, this.mass);
 }
 
+//using equation K = 1/2 * m * v^2
+//returns scalar
 Mover.prototype.kineticEnergy = function(){
   var v = this.vel.magnitude();
   return this.mass * v * v / 2;

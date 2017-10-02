@@ -6,7 +6,7 @@ function vector2d (x, y, r, theta){
 /////////////////////// INSTANCE FUNCTIONS /////////////////
 
 vector2d.prototype.theta = function(){
-  return Math.atan(this.y / this.x);
+  return Math.atan2(this.y, this.x);
 }
 
 vector2d.prototype.magnitude = function(){
@@ -53,7 +53,7 @@ vector2d.prototype.setDirection = function(theta){
 }
 
 vector2d.prototype.limit = function(max){
-  if(this.magnitude > max){
+  if(this.magnitude() > max){
     this.setMag(max);
   }
 }
